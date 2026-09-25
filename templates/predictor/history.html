@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}My history{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2>My predictions</h2>
+
+    {% if page.object_list %}
+        <div class="table-wrap">
+            <table class="history">
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Input</th>
+                        <th>Prediction</th>
+                        <th>Confidence</th>
+                        <th>True label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in page %}
+                        <tr>
+                            <td><a href="{% url 'prediction_detail' p.pk %}">{{ p.created_at|date:"j M Y, H:i" }}</a></td>
+                            <td>{{ p.source_name }}</td>
+                            <td>{{ p.get_predicted_label_display }}</td>
+                            <td>{% widthratio p.confidence 1 100 %}%</td>
+                            <td>
+                                {% if p.true_label %}
+                                    {{ p.true_label }}
+                                    {% if p.is_correct %}
+                                        <span class="badge badge-correct">correct</span>
+                                    {% else %}
+                                        <span class="badge badge-wrong">incorrect</span>
+                                    {% endif %}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page.has_other_pages %}
+            <nav class="pagination">
+                {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">&larr; Newer</a>{% endif %}
+                <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+                {% if page.has_next %}<a href="?page={{ page.next_page_number }}">Older &rarr;</a>{% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <p class="hint">No predictions yet. <a href="{% url 'home' %}">Classify your first sonar return.</a></p>
+    {% endif %}
+</section>
+{% endblock %}

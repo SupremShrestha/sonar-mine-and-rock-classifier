@@ -1,0 +1,45 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}EchoPoint Sonar Classifier{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+</head>
+<body>
+<div class="app-shell">
+    <aside class="command-rail">
+        <a class="brand" href="{% url 'home' %}"><span class="brand-mark">E</span><span><b>ECHOPOINT</b><small>TARGET·CLASSIFIER</small></span></a>
+        <p class="console-id">PPI CONSOLE / 03</p>
+        <nav class="rail-nav" aria-label="Primary navigation">
+            <a href="{% url 'home' %}"><span>01</span>Command</a>
+            {% if user.is_authenticated %}<a href="{% url 'history' %}"><span>02</span>History</a>{% endif %}
+        </nav>
+        <div class="operator">
+            <p>OPERATOR</p>
+            {% if user.is_authenticated %}
+            <div class="operator-row"><span class="avatar">{{ user.username|slice:":2"|upper }}</span><span><b>{{ user.username }}</b><small>DUTY OFFICER</small></span></div>
+            <div class="operator-actions"><a href="{% url 'password_change' %}">Account</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Log out</button></form></div>
+            {% else %}
+            <div class="operator-row"><span class="avatar">--</span><span><b>Guest access</b><small>UNAUTHENTICATED</small></span></div>
+            <div class="operator-actions"><a href="{% url 'login' %}">Log in</a><a class="signup-link" href="{% url 'signup' %}">Sign up</a></div>
+            {% endif %}
+        </div>
+    </aside>
+    <main class="main-deck">
+        <header class="topbar">
+            <div><h1>{% block heading %}Live Prediction{% endblock %}</h1><p>ACOUSTIC RETURN · CLASSIFICATION STATION</p></div>
+            <div class="status-group"><span class="status"><i></i>MODEL <b>ONLINE</b></span><span class="status">ACC <b>88.1%</b></span></div>
+        </header>
+        <div class="page-content">
+            {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+</body>
+</html>
