@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Account · EchoPoint{% endblock %}
+{% block page_class %} page-dashboard{% endblock %}
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-head">
+        <span class="avatar avatar-xl">{{ user.username|slice:":2"|upper }}</span>
+        <div class="dashboard-head-text">
+            <h1>{{ user.first_name|default:user.username }}</h1>
+            <p>@{{ user.username }} &middot; Member since {{ user.date_joined|date:"M Y" }}</p>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="dashboard-card dashboard-card--profile">
+            <div class="dashboard-card-header">
+                <span class="card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <div>
+                    <h2>Profile</h2>
+                    <p>Update the name and email on your account</p>
+                </div>
+            </div>
+            <form method="post" class="stack">
+                {% csrf_token %}
+                <div class="form-wrapper">
+                    {% include "partials/form_fields.html" %}
+                </div>
+                <button type="submit" class="btn btn-primary glow-btn">Save changes</button>
+            </form>
+        </section>
+
+        <section class="dashboard-card dashboard-card--security">
+            <div class="dashboard-card-header">
+                <span class="card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <div>
+                    <h2>Security</h2>
+                    <p>Keep your account safe with a strong, unique password</p>
+                </div>
+            </div>
+            <a href="{% url 'password_change' %}" class="btn btn-primary btn-lg glow-btn full-width">
+                Change password
+            </a>
+        </section>
+
+        <section class="dashboard-card dashboard-card--activity">
+            <div class="dashboard-card-header">
+                <span class="card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l2-7 4 14 3-10 2 3h5"/></svg>
+                </span>
+                <div>
+                    <h2>Activity</h2>
+                    <p>Your classification history at a glance</p>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat">
+                    <span class="stat-value">{{ total_predictions }}</span>
+                    <span class="stat-label">Total runs</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value stat-rock">{{ rock_count }}</span>
+                    <span class="stat-label">Called rock</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value stat-mine">{{ mine_count }}</span>
+                    <span class="stat-label">Called mine</span>
+                </div>
+            </div>
+            {% if last_prediction %}
+                <p class="hint">Last run {{ last_prediction.created_at|date:"j M, H:i" }} &middot; <a href="{% url 'prediction_detail' last_prediction.pk %}" class="auth-link-bold">view</a></p>
+            {% endif %}
+            <a href="{% url 'history' %}" class="btn btn-outline btn-sm full-width">View full history</a>
+        </section>
+    </div>
+</div>
+{% endblock %}

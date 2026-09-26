@@ -49,6 +49,9 @@ class SonarInputForm(forms.Form):
         required=False,
         label="Upload a CSV file",
         help_text="One row of 60 values between 0 and 1. A header row is optional.",
+        widget=forms.ClearableFileInput(
+            attrs={"class": "dropzone-input", "accept": ".csv,text/csv"}
+        ),
     )
     pasted_values = forms.CharField(
         required=False,

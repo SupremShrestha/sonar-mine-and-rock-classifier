@@ -31,3 +31,26 @@ class SignUpForm(UniqueEmailMixin, UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         fields = ("username", "email")
+
+
+class ProfileForm(UniqueEmailMixin, forms.ModelForm):
+    """Lets a signed-in user update their display name and email.
+
+    Username is intentionally left out — it's the login identifier and
+    changing it would need its own confirmation flow, so that stays on
+    the account page as a read-only field instead.
+    """
+
+    first_name = forms.CharField(
+        required=True,
+        label="Full name",
+        max_length=150,
+    )
+    email = forms.EmailField(
+        required=True,
+        help_text="Used for password resets and login notices.",
+    )
+
+    class Meta:
+        model = User
+        fields = ("first_name", "email")

@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script src="{% static 'app.js' %}" defer></script>
     <script>
         // Apply saved theme before paint to avoid a flash of the wrong theme.
         (function () {
@@ -35,7 +36,7 @@
         <div class="user-menu">
             <span class="avatar">{{ user.username|slice:":2"|upper }}</span>
             <span class="name">{{ user.username }}</span>
-            <a class="link-btn" href="{% url 'password_change' %}">Account</a>
+            <a class="link-btn" href="{% url 'profile' %}">Account</a>
             <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="link-btn">Log out</button></form>
         </div>
         {% else %}

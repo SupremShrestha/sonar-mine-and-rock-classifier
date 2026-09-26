@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views.generic import UpdateView
 
-from .forms import SignUpForm
+from .forms import ProfileForm, SignUpForm
 
 
 def signup_view(request):
@@ -23,6 +26,29 @@ def signup_view(request):
         form = SignUpForm()
 
     return render(request, "registration/signup.html", {"form": form})
+
+
+class ProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    form_class = ProfileForm
+    template_name = "accounts/profile.html"
+    success_url = reverse_lazy("profile")
+    success_message = "Your account has been updated."
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        predictions = self.request.user.predictions.all()
+        by_label = {
+            row["predicted_label"]: row["total"]
+            for row in predictions.values("predicted_label").annotate(total=Count("id"))
+        }
+        context["total_predictions"] = predictions.count()
+        context["mine_count"] = by_label.get("M", 0)
+        context["rock_count"] = by_label.get("R", 0)
+        context["last_prediction"] = predictions.first()  # Prediction.Meta orders -created_at
+        return context
 
 
 class PasswordChangeView(SuccessMessageMixin, auth_views.PasswordChangeView):
