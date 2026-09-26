@@ -9,6 +9,13 @@ from .forms import SonarInputForm
 from .models import Prediction
 
 
+def landing_view(request):
+    # Signed-in users don't need the pitch — send them straight to the tool.
+    if request.user.is_authenticated:
+        return redirect("home")
+    return render(request, "predictor/landing.html")
+
+
 def _save_prediction(user, features, source, source_name, true_label=""):
     result = ml.predict(features)
     return Prediction.objects.create(

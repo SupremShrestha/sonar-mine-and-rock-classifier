@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}EchoPoint — Sonar Mine/Rock Classifier{% endblock %}
+{% block page_class %} page-landing{% endblock %}
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <span class="eyebrow">UCI Connectionist Bench &middot; Sonar dataset</span>
+        <h1>Tell a mine from a rock in one sonar return.</h1>
+        <p>EchoPoint runs a tuned SVM classifier over 60 sonar frequency readings and tells you, instantly, whether the object is a metal cylinder or a rock — with a confidence breakdown for every call.</p>
+        <div class="hero-actions">
+            <a href="{% url 'signup' %}" class="btn btn-primary">Get started free</a>
+            <a href="{% url 'login' %}" class="pill-btn-outline">Log in</a>
+        </div>
+        <p class="hero-note">No dataset of your own? Every account can generate a real held-out test row with one click.</p>
+    </div>
+    <div class="hero-visual">
+        <div class="scope-card">
+            <div class="scope" aria-hidden="true">
+                <span class="ring ring-one"></span><span class="ring ring-two"></span>
+                <span class="sweep"></span><span class="scope-center"></span>
+                <span class="blip blip-one"></span><span class="blip blip-two"></span>
+            </div>
+            <div class="scope-stats">
+                <div><span>Readings</span><strong>60 / 60</strong></div>
+                <div><span>Model</span><strong>SVM</strong></div>
+                <div><span>Accuracy</span><strong>88.1%</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h3>Two ways in</h3>
+        <p>Upload a CSV of 60 readings, or click "Try a sample" to pull a real row from the held-out test set — both go through the exact same prediction path.</p>
+    </div>
+    <div class="feature-card">
+        <h3>A tuned model</h3>
+        <p>An SVM classifier tuned with GridSearchCV, reaching 88.1% test accuracy, up from an 85.7% untuned baseline.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Your full history</h3>
+        <p>Every prediction is saved to your account with its confidence split, so you can look back and see how the model has done.</p>
+    </div>
+</section>
+
+<section class="steps">
+    <h2>How it works</h2>
+    <ol class="step-list">
+        <li><span class="step-num">1</span><div><strong>Create an account</strong><p>Free, and takes a few seconds.</p></div></li>
+        <li><span class="step-num">2</span><div><strong>Submit 60 readings</strong><p>Upload your own CSV row, or try a sample from the test set.</p></div></li>
+        <li><span class="step-num">3</span><div><strong>Get your verdict</strong><p>Mine or rock, with a confidence score for each class.</p></div></li>
+    </ol>
+</section>
+
+<section class="cta-band">
+    <h2>Ready to try it?</h2>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Create your account</a>
+</section>
+{% endblock %}

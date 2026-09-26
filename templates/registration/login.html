@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}Log in{% endblock %}
+{% block heading %}Log in{% endblock %}
+{% block subheading %}Welcome back{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h2>Log in</h2>
-
+<section class="panel card">
     <form method="post" class="stack" novalidate>
         {% csrf_token %}
         {% include "partials/form_fields.html" %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}Sign up{% endblock %}
+{% block heading %}Create an account{% endblock %}
+{% block subheading %}Save your predictions and track accuracy over time{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h2>Create an account</h2>
-
+<section class="panel card">
     <form method="post" class="stack" novalidate>
         {% csrf_token %}
         {% include "partials/form_fields.html" %}

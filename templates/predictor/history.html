@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}My history{% endblock %}
+{% block heading %}My history{% endblock %}
+{% block subheading %}Every return you've classified, most recent first{% endblock %}
 
 {% block content %}
 <section class="panel">
-    <h2>My predictions</h2>
-
     {% if page.object_list %}
         <div class="table-wrap">
             <table class="history">
