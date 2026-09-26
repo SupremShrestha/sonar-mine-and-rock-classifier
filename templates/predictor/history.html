@@ -9,15 +9,15 @@
     {% if page.object_list %}
         <div class="table-card">
             <div class="table-wrap">
-                <table class="history history-modern">
+                <table class="history history-modern" aria-label="Prediction history, page {{ page.number }} of {{ page.paginator.num_pages }}">
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Source</th>
-                            <th>Predicted Target</th>
-                            <th>Confidence</th>
-                            <th>Ground Truth</th>
-                            <th>Action</th>
+                            <th scope="col">Timestamp</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Predicted Target</th>
+                            <th scope="col">Confidence</th>
+                            <th scope="col">Ground Truth</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,7 +37,7 @@
                                 </td>
                                 <td>
                                     <div class="confidence-cell">
-                                        <div class="mini-bar">
+                                        <div class="mini-bar" aria-hidden="true">
                                             <div class="mini-fill {% if p.predicted_label == 'M' %}fill-mine{% else %}fill-rock{% endif %}" style="width: {% widthratio p.confidence 1 100 %}%"></div>
                                         </div>
                                         <span>{% widthratio p.confidence 1 100 %}%</span>
@@ -46,19 +46,19 @@
                                 <td>
                                     {% if p.true_label %}
                                         <div class="truth-cell">
-                                            <span>{{ p.true_label }}</span>
+                                            <span>{% if p.true_label == 'M' %}Mine{% elif p.true_label == 'R' %}Rock{% else %}{{ p.true_label }}{% endif %}</span>
                                             {% if p.is_correct %}
-                                                <span class="badge badge-correct">&check; Correct</span>
+                                                <span class="badge badge-correct"><span aria-hidden="true">&check;</span> Correct</span>
                                             {% else %}
-                                                <span class="badge badge-wrong">&cross; Wrong</span>
+                                                <span class="badge badge-wrong"><span aria-hidden="true">&cross;</span> Wrong</span>
                                             {% endif %}
                                         </div>
                                     {% else %}
-                                        <span class="text-muted">&mdash;</span>
+                                        <span class="text-muted" aria-label="No ground truth available">&mdash;</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{% url 'prediction_detail' p.pk %}" class="btn-action">Details</a>
+                                    <a href="{% url 'prediction_detail' p.pk %}" class="btn-action">Details<span class="visually-hidden"> for {{ p.source_name }}, predicted {{ p.get_predicted_label_display }}</span></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -68,7 +68,7 @@
         </div>
 
         {% if page.has_other_pages %}
-            <nav class="pagination-modern">
+            <nav class="pagination-modern" aria-label="Prediction history pages">
                 <div class="pag-left">
                     {% if page.has_previous %}
                         <a href="?page={{ page.previous_page_number }}" class="btn btn-outline btn-sm">&larr; Newer</a>
@@ -84,7 +84,7 @@
         {% endif %}
     {% else %}
         <div class="empty-state">
-            <div class="empty-icon">
+            <div class="empty-icon" aria-hidden="true">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             </div>
             <h3>No predictions logged yet</h3>
@@ -93,4 +93,24 @@
         </div>
     {% endif %}
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Full-page navigations (pagination, Details) can take a moment on a
+    // slow connection or a big history. Show a thin top bar immediately on
+    // click so the page doesn't feel unresponsive while the next page loads.
+    (function () {
+        var bar = document.createElement('div');
+        bar.className = 'top-loader';
+        bar.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(bar);
+
+        document.querySelectorAll('.pagination-modern a, .btn-action').forEach(function (link) {
+            link.addEventListener('click', function () {
+                bar.classList.add('is-active');
+            });
+        });
+    })();
+</script>
 {% endblock %}
