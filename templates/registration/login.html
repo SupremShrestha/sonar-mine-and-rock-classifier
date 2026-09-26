@@ -1,18 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Log in{% endblock %}
-{% block heading %}Log in{% endblock %}
-{% block subheading %}Welcome back{% endblock %}
+{% block title %}Log in · EchoPoint{% endblock %}
+{% block page_class %} page-auth{% endblock %}
+{% block page_header %}{% endblock %}
 
 {% block content %}
-<section class="panel card">
-    <form method="post" class="stack" novalidate>
-        {% csrf_token %}
-        {% include "partials/form_fields.html" %}
-        <input type="hidden" name="next" value="{{ next }}">
-        <button type="submit" class="btn btn-primary">Log in</button>
-    </form>
-    <p class="hint"><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-    <p class="hint">No account yet? <a href="{% url 'signup' %}">Sign up</a></p>
-</section>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            </div>
+            <h2>Welcome back</h2>
+            <p>Log in to access your sonar prediction history</p>
+        </div>
+
+        <form method="post" class="stack auth-form" novalidate>
+            {% csrf_token %}
+            <div class="form-wrapper">
+                {% include "partials/form_fields.html" %}
+            </div>
+            <input type="hidden" name="next" value="{{ next }}">
+            <button type="submit" class="btn btn-primary btn-lg glow-btn full-width">
+                Log In
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p class="hint"><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+            <p class="hint">Don't have an account? <a href="{% url 'signup' %}" class="auth-link-bold">Sign up</a></p>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,63 +1,163 @@
 {% extends "base.html" %}
 
-{% block title %}EchoPoint — Sonar Mine/Rock Classifier{% endblock %}
+{% block title %}EchoPoint — High-Precision Sonar Classification{% endblock %}
 {% block page_class %} page-landing{% endblock %}
 {% block page_header %}{% endblock %}
 
 {% block content %}
-<section class="hero">
+<!-- Modern Hero Section -->
+<section class="hero hero-redesign">
     <div class="hero-copy">
-        <span class="eyebrow">UCI Connectionist Bench &middot; Sonar dataset</span>
-        <h1>Tell a mine from a rock in one sonar return.</h1>
-        <p>EchoPoint runs a tuned SVM classifier over 60 sonar frequency readings and tells you, instantly, whether the object is a metal cylinder or a rock — with a confidence breakdown for every call.</p>
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            <span>UCI Connectionist Bench &middot; Sonar Dataset</span>
+        </div>
+        <h1 class="hero-title">
+            Distinguish <span class="text-gradient-mine">Mines</span> from <span class="text-gradient-rock">Rocks</span> with AI Precision.
+        </h1>
+        <p class="hero-description">
+            EchoPoint leverages an optimized Support Vector Machine (SVM) model to instantly classify ocean floor sonar returns across 60 spectral frequencies with calibrated probability scores.
+        </p>
+        
         <div class="hero-actions">
-            <a href="{% url 'signup' %}" class="btn btn-primary">Get started free</a>
-            <a href="{% url 'login' %}" class="pill-btn-outline">Log in</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg glow-btn">
+                    Launch Classifier
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="{% url 'history' %}" class="btn btn-outline btn-lg">View History</a>
+            {% else %}
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg glow-btn">
+                    Get Started Free
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline btn-lg">Log In</a>
+            {% endif %}
         </div>
-        <p class="hero-note">No dataset of your own? Every account can generate a real held-out test row with one click.</p>
+
+        <div class="hero-trust">
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>GridSearchCV Optimized</span>
+            </div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Instant Probability Breakdown</span>
+            </div>
+        </div>
     </div>
+
+    <!-- Sonar Radar Visual Card -->
     <div class="hero-visual">
-        <div class="scope-card">
-            <div class="scope" aria-hidden="true">
-                <span class="ring ring-one"></span><span class="ring ring-two"></span>
-                <span class="sweep"></span><span class="scope-center"></span>
-                <span class="blip blip-one"></span><span class="blip blip-two"></span>
+        <div class="scope-card-modern">
+            <div class="scope-header">
+                <span class="live-status"><span class="status-indicator"></span> Active Radar</span>
+                <span class="scope-coords">02.14° N &middot; 48.11° E</span>
             </div>
-            <div class="scope-stats">
-                <div><span>Readings</span><strong>60 / 60</strong></div>
-                <div><span>Model</span><strong>SVM</strong></div>
-                <div><span>Accuracy</span><strong>88.1%</strong></div>
+            
+            <div class="scope" aria-hidden="true">
+                <div class="grid-lines"></div>
+                <span class="ring ring-one"></span>
+                <span class="ring ring-two"></span>
+                <span class="ring ring-three"></span>
+                <span class="sweep"></span>
+                <span class="scope-center"></span>
+                <span class="blip blip-mine" title="Mine Detected"></span>
+                <span class="blip blip-rock" title="Rock Detected"></span>
+            </div>
+
+            <div class="scope-stats-grid">
+                <div class="stat-box">
+                    <span>Readings</span>
+                    <strong>60 Band</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Model</span>
+                    <strong>SVM</strong>
+                </div>
+                <div class="stat-box highlight">
+                    <span>Accuracy</span>
+                    <strong>88.1%</strong>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="features">
-    <div class="feature-card">
-        <h3>Two ways in</h3>
-        <p>Upload a CSV of 60 readings, or click "Try a sample" to pull a real row from the held-out test set — both go through the exact same prediction path.</p>
+<!-- Feature Matrix Section -->
+<section class="features-section">
+    <div class="section-title text-center">
+        <h2>Designed for Accuracy & Instant Feedback</h2>
+        <p>A streamlined workflow built for field evaluation and model verification.</p>
     </div>
-    <div class="feature-card">
-        <h3>A tuned model</h3>
-        <p>An SVM classifier tuned with GridSearchCV, reaching 88.1% test accuracy, up from an 85.7% untuned baseline.</p>
-    </div>
-    <div class="feature-card">
-        <h3>Your full history</h3>
-        <p>Every prediction is saved to your account with its confidence split, so you can look back and see how the model has done.</p>
+
+    <div class="features-grid">
+        <div class="feature-card-modern">
+            <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h3>Flexible Input Options</h3>
+            <p>Upload your own 60-reading sonar frequency CSV file or test instantly using sample rows pulled directly from held-out test datasets.</p>
+        </div>
+
+        <div class="feature-card-modern">
+            <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <h3>Tuned SVM Engine</h3>
+            <p>Powered by a hyperparameter-tuned Support Vector Classifier yielding 88.1% test accuracy, outperforming standard baseline models.</p>
+        </div>
+
+        <div class="feature-card-modern">
+            <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+            </div>
+            <h3>Classification Audit Trail</h3>
+            <p>Automatically log each classified pulse with prediction confidence and exact probability metrics stored securely under your profile.</p>
+        </div>
     </div>
 </section>
 
-<section class="steps">
-    <h2>How it works</h2>
-    <ol class="step-list">
-        <li><span class="step-num">1</span><div><strong>Create an account</strong><p>Free, and takes a few seconds.</p></div></li>
-        <li><span class="step-num">2</span><div><strong>Submit 60 readings</strong><p>Upload your own CSV row, or try a sample from the test set.</p></div></li>
-        <li><span class="step-num">3</span><div><strong>Get your verdict</strong><p>Mine or rock, with a confidence score for each class.</p></div></li>
-    </ol>
+<!-- Step-by-Step Guidance -->
+<section class="steps-section">
+    <div class="section-title text-center">
+        <h2>How EchoPoint Works</h2>
+    </div>
+
+    <div class="steps-wrapper">
+        <div class="step-card">
+            <div class="step-badge">01</div>
+            <h4>Input Frequencies</h4>
+            <p>Submit 60 normalized sonar frequency reflections or generate a test sample with one click.</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-card">
+            <div class="step-badge">02</div>
+            <h4>Feature Processing</h4>
+            <p>The SVM kernel maps multi-frequency acoustic energy levels through tuned decision boundaries.</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-card">
+            <div class="step-badge">03</div>
+            <h4>Target Classification</h4>
+            <p>Receive immediate feedback classifying target density as either Mine (Metal) or Rock, accompanied by probability metrics.</p>
+        </div>
+    </div>
 </section>
 
-<section class="cta-band">
-    <h2>Ready to try it?</h2>
-    <a href="{% url 'signup' %}" class="btn btn-primary">Create your account</a>
+<!-- Call to Action Banner -->
+<section class="cta-banner">
+    <div class="cta-content">
+        <h2>Ready to run your first sonar scan?</h2>
+        <p>No dataset required—explore the classifier in action using pre-loaded test data.</p>
+        <div class="cta-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg glow-btn">Start Scan Now</a>
+            {% else %}
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg glow-btn">Create Free Account</a>
+                <a href="{% url 'login' %}" class="btn btn-outline btn-lg">Log In</a>
+            {% endif %}
+        </div>
+    </div>
 </section>
 {% endblock %}

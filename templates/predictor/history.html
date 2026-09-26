@@ -1,57 +1,96 @@
 {% extends "base.html" %}
 
-{% block title %}My history{% endblock %}
-{% block heading %}My history{% endblock %}
-{% block subheading %}Every return you've classified, most recent first{% endblock %}
+{% block title %}Prediction History · EchoPoint{% endblock %}
+{% block heading %}Prediction History{% endblock %}
+{% block subheading %}Audit log of all classified sonar returns linked to your profile{% endblock %}
 
 {% block content %}
-<section class="panel">
+<section class="panel panel-history">
     {% if page.object_list %}
-        <div class="table-wrap">
-            <table class="history">
-                <thead>
-                    <tr>
-                        <th>When</th>
-                        <th>Input</th>
-                        <th>Prediction</th>
-                        <th>Confidence</th>
-                        <th>True label</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in page %}
+        <div class="table-card">
+            <div class="table-wrap">
+                <table class="history history-modern">
+                    <thead>
                         <tr>
-                            <td><a href="{% url 'prediction_detail' p.pk %}">{{ p.created_at|date:"j M Y, H:i" }}</a></td>
-                            <td>{{ p.source_name }}</td>
-                            <td>{{ p.get_predicted_label_display }}</td>
-                            <td>{% widthratio p.confidence 1 100 %}%</td>
-                            <td>
-                                {% if p.true_label %}
-                                    {{ p.true_label }}
-                                    {% if p.is_correct %}
-                                        <span class="badge badge-correct">correct</span>
-                                    {% else %}
-                                        <span class="badge badge-wrong">incorrect</span>
-                                    {% endif %}
-                                {% else %}
-                                    &mdash;
-                                {% endif %}
-                            </td>
+                            <th>Timestamp</th>
+                            <th>Source</th>
+                            <th>Predicted Target</th>
+                            <th>Confidence</th>
+                            <th>Ground Truth</th>
+                            <th>Action</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for p in page %}
+                            <tr class="history-row">
+                                <td class="time-cell">
+                                    <span class="date">{{ p.created_at|date:"j M Y" }}</span>
+                                    <span class="time">{{ p.created_at|date:"H:i" }}</span>
+                                </td>
+                                <td>
+                                    <span class="source-badge">{{ p.source_name }}</span>
+                                </td>
+                                <td>
+                                    <span class="target-tag {% if p.predicted_label == 'M' %}target-mine{% else %}target-rock{% endif %}">
+                                        {{ p.get_predicted_label_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="confidence-cell">
+                                        <div class="mini-bar">
+                                            <div class="mini-fill {% if p.predicted_label == 'M' %}fill-mine{% else %}fill-rock{% endif %}" style="width: {% widthratio p.confidence 1 100 %}%"></div>
+                                        </div>
+                                        <span>{% widthratio p.confidence 1 100 %}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if p.true_label %}
+                                        <div class="truth-cell">
+                                            <span>{{ p.true_label }}</span>
+                                            {% if p.is_correct %}
+                                                <span class="badge badge-correct">&check; Correct</span>
+                                            {% else %}
+                                                <span class="badge badge-wrong">&cross; Wrong</span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">&mdash;</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'prediction_detail' p.pk %}" class="btn-action">Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         {% if page.has_other_pages %}
-            <nav class="pagination">
-                {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">&larr; Newer</a>{% endif %}
-                <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
-                {% if page.has_next %}<a href="?page={{ page.next_page_number }}">Older &rarr;</a>{% endif %}
+            <nav class="pagination-modern">
+                <div class="pag-left">
+                    {% if page.has_previous %}
+                        <a href="?page={{ page.previous_page_number }}" class="btn btn-outline btn-sm">&larr; Newer</a>
+                    {% endif %}
+                </div>
+                <span class="pag-info">Page <strong>{{ page.number }}</strong> of {{ page.paginator.num_pages }}</span>
+                <div class="pag-right">
+                    {% if page.has_next %}
+                        <a href="?page={{ page.next_page_number }}" class="btn btn-outline btn-sm">Older &rarr;</a>
+                    {% endif %}
+                </div>
             </nav>
         {% endif %}
     {% else %}
-        <p class="hint">No predictions yet. <a href="{% url 'home' %}">Classify your first sonar return.</a></p>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <h3>No predictions logged yet</h3>
+            <p>Runs from the classifier workspace will automatically log confidence splits here.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary glow-btn">Classify Your First Signal</a>
+        </div>
     {% endif %}
 </section>
 {% endblock %}

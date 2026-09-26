@@ -1,47 +1,165 @@
 {% extends "base.html" %}
+
 {% block title %}Classify · EchoPoint{% endblock %}
+{% block heading %}Sonar Signal Classifier{% endblock %}
+{% block subheading %}Analyze 60-frequency spectral signatures using our tuned SVM model{% endblock %}
+
 {% block content %}
-<div class="workspace">
-    <section class="visual-column">
-        <div class="scope-card">
-            <div class="scope" aria-hidden="true">
-                <span class="ring ring-one"></span><span class="ring ring-two"></span>
-                <span class="sweep"></span><span class="scope-center"></span>
-                <span class="blip blip-one"></span><span class="blip blip-two"></span>
+<div class="workspace workspace-redesign">
+    <!-- Visual Radar Column -->
+    <aside class="visual-column">
+        <div class="scope-card-modern">
+            <div class="scope-header">
+                <span class="live-status"><span class="status-indicator"></span> Acoustic Scope</span>
+                <span class="scope-coords">60 Channels</span>
             </div>
-            <div class="scope-stats">
-                <div><span>Readings</span><strong>60 / 60</strong></div>
-                <div><span>Model</span><strong>SVM</strong></div>
-                <div><span>Accuracy</span><strong>88.1%</strong></div>
+            
+            <div class="scope" aria-hidden="true">
+                <div class="grid-lines"></div>
+                <span class="ring ring-one"></span>
+                <span class="ring ring-two"></span>
+                <span class="ring ring-three"></span>
+                <span class="sweep"></span>
+                <span class="scope-center"></span>
+                <span class="blip blip-mine"></span>
+                <span class="blip blip-rock"></span>
+            </div>
+
+            <div class="scope-stats-grid">
+                <div class="stat-box">
+                    <span>Input Vector</span>
+                    <strong>60 Floating</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Classifier</span>
+                    <strong>SVM</strong>
+                </div>
+                <div class="stat-box highlight">
+                    <span>Accuracy</span>
+                    <strong>88.1%</strong>
+                </div>
             </div>
         </div>
-    </section>
-    <section class="control-column">
-        <div class="card">
-            <div class="section-heading"><h2>Input</h2><span>60 values</span></div>
+
+        <div class="info-card">
+            <h4>Quick Tip</h4>
+            <p>You can upload a CSV row of 60 values (0.0 to 1.0) or use the <strong>Try a sample</strong> button below to draw a real signal from the held-out test set.</p>
+        </div>
+    </aside>
+
+    <!-- Main Workspace Control & Result Column -->
+    <main class="control-column">
+        <!-- Input Panel -->
+        <div class="card input-card">
+            <div class="section-heading">
+                <h2>Sonar Data Input</h2>
+                <span class="badge-neutral">CSV or Raw Values</span>
+            </div>
+
             <form method="post" action="{% url 'home' %}" enctype="multipart/form-data" class="stack" novalidate>
-                {% csrf_token %}{% include "partials/form_fields.html" %}
-                <button type="submit" class="btn btn-primary">Predict</button>
+                {% csrf_token %}
+                <div class="form-wrapper">
+                    {% include "partials/form_fields.html" %}
+                </div>
+                
+                <div class="form-actions-grid">
+                    <button type="submit" class="btn btn-primary btn-lg glow-btn flex-1">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Classify Signal
+                    </button>
+                </div>
             </form>
+
+            <div class="divider"><span>OR</span></div>
+
             <form method="post" action="{% url 'home' %}" class="sample-form">
-                {% csrf_token %}<button type="submit" name="use_sample" value="1" class="btn btn-secondary">Try a sample</button>
+                {% csrf_token %}
+                <button type="submit" name="use_sample" value="1" class="btn btn-secondary full-width">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Load Random Test Sample
+                </button>
             </form>
         </div>
 
+        <!-- Prediction Result Output -->
         {% if prediction %}
-        <div class="section-heading result-heading"><h2>Result</h2>{% if prediction.true_label %}<span class="{% if prediction.is_correct %}correct{% else %}incorrect{% endif %}"><i></i>{% if prediction.is_correct %}Correct{% else %}Incorrect{% endif %}</span>{% endif %}</div>
-        <article class="result-card {% if prediction.predicted_label == 'M' %}result-mine{% else %}result-rock{% endif %}">
-            <p class="source-line">{{ prediction.source_name }} &middot; {{ prediction.get_source_display }}</p>
-            <div class="verdict"><strong>{{ prediction.get_predicted_label_display|upper }}</strong><span>predicted label</span></div>
-            <div class="proba-bars">
-                <div class="proba-row"><p><span>Mine</span><b>{% widthratio prediction.probability_mine 1 100 %}%</b></p><div class="bar"><div class="bar-fill mine" style="width:{% widthratio prediction.probability_mine 1 100 %}%"></div></div></div>
-                <div class="proba-row"><p><span>Rock</span><b>{% widthratio prediction.probability_rock 1 100 %}%</b></p><div class="bar"><div class="bar-fill rock" style="width:{% widthratio prediction.probability_rock 1 100 %}%"></div></div></div>
+        <div class="result-section">
+            <div class="section-heading result-heading">
+                <h2>Classification Result</h2>
+                {% if prediction.true_label %}
+                    <span class="status-badge {% if prediction.is_correct %}badge-success{% else %}badge-danger{% endif %}">
+                        <i class="status-dot"></i>
+                        {% if prediction.is_correct %}Matches Ground Truth{% else %}Mismatch{% endif %}
+                    </span>
+                {% endif %}
             </div>
-            <footer><span>Confidence</span><b>{% widthratio prediction.confidence 1 100 %}%</b></footer>
-            {% if prediction.true_label %}<p class="ground-truth">True label: <strong>{{ prediction.get_true_label_display }}</strong></p>{% endif %}
-            <p class="saved-note">Saved to <a href="{% url 'history' %}">your history</a>.</p>
-        </article>
+
+            <article class="result-card-modern {% if prediction.predicted_label == 'M' %}result-card-mine{% else %}result-card-rock{% endif %}">
+                <div class="result-top">
+                    <div class="result-tag">
+                        <span class="source-pill">{{ prediction.source_name }}</span>
+                        <span class="source-type">&middot; {{ prediction.get_source_display }}</span>
+                    </div>
+                    <div class="timestamp">{{ prediction.created_at|date:"H:i:s" }}</div>
+                </div>
+
+                <div class="verdict-banner">
+                    <div class="verdict-main">
+                        <span class="verdict-label">Target Detected</span>
+                        <strong class="verdict-title">
+                            {% if prediction.predicted_label == 'M' %}
+                                MINE (Metal Cylinder)
+                            {% else %}
+                                ROCK
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <div class="verdict-confidence">
+                        <span>Confidence</span>
+                        <strong>{% widthratio prediction.confidence 1 100 %}%</strong>
+                    </div>
+                </div>
+
+                <!-- Probability Distribution -->
+                <div class="proba-section">
+                    <div class="proba-head">
+                        <span>Probability Distribution</span>
+                    </div>
+
+                    <!-- Mine Bar -->
+                    <div class="proba-row">
+                        <div class="proba-meta">
+                            <span class="class-name">Mine (M)</span>
+                            <span class="class-val">{% widthratio prediction.probability_mine 1 100 %}%</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill fill-mine" style="width: {% widthratio prediction.probability_mine 1 100 %}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rock Bar -->
+                    <div class="proba-row">
+                        <div class="proba-meta">
+                            <span class="class-name">Rock (R)</span>
+                            <span class="class-val">{% widthratio prediction.probability_rock 1 100 %}%</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill fill-rock" style="width: {% widthratio prediction.probability_rock 1 100 %}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-footer">
+                    {% if prediction.true_label %}
+                        <div class="truth-comparison">
+                            True Label: <strong>{{ prediction.get_true_label_display }}</strong>
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'history' %}" class="history-link">View in History &rarr;</a>
+                </div>
+            </article>
+        </div>
         {% endif %}
-    </section>
+    </main>
 </div>
 {% endblock %}

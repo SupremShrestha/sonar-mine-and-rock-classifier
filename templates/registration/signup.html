@@ -1,17 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Sign up{% endblock %}
-{% block heading %}Create an account{% endblock %}
-{% block subheading %}Save your predictions and track accuracy over time{% endblock %}
+{% block title %}Sign up · EchoPoint{% endblock %}
+{% block page_class %} page-auth{% endblock %}
+{% block page_header %}{% endblock %}
 
 {% block content %}
-<section class="panel card">
-    <form method="post" class="stack" novalidate>
-        {% csrf_token %}
-        {% include "partials/form_fields.html" %}
-        <button type="submit" class="btn btn-primary">Sign up</button>
-    </form>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            </div>
+            <h2>Create an account</h2>
+            <p>Save predictions and track signal accuracy over time</p>
+        </div>
 
-    <p class="hint">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
-</section>
+        <form method="post" class="stack auth-form" novalidate>
+            {% csrf_token %}
+            <div class="form-wrapper">
+                {% include "partials/form_fields.html" %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg glow-btn full-width">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p class="hint">Already have an account? <a href="{% url 'login' %}" class="auth-link-bold">Log in</a></p>
+        </div>
+    </div>
+</div>
 {% endblock %}
